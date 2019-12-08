@@ -20,43 +20,37 @@
 //          the sf::Texture pointers more than once.
 // ======================================================================
 
-
-
 #pragma once
 
 #include <iostream>
 #include <map>
 #include <SFML/Graphics.hpp>
 
-const bool debug_mode = false;
+const bool debug_mode = true;
 
 class TextureManager {
     public:
-        TextureManager();
-        ~TextureManager();
-
         // Add a new texture to the map:
-        void load(std::string filepath);
+        static void load(std::string filepath);
 
         // Get pointer at key:
-        // NOTE: same as [] operator, but works with pointers.
-        sf::Texture* get_texture(std::string key);
-
-        // Overloaded Operators:
-        sf::Texture* operator [] (std::string key);
-        void operator = (TextureManager& original);
+        static sf::Texture* get_texture(std::string key);
+        static sf::Texture& get_texture_ref(std::string key);
 
         // Map Iterators:
-        std::map<std::string, sf::Texture*>::iterator begin();
-        std::map<std::string, sf::Texture*>::iterator end();
+        static std::map<std::string, sf::Texture>::iterator begin();
+        static std::map<std::string, sf::Texture>::iterator end();
 
         // Get Size of the map:
-        int size();
+        static int size();
 
         // DEBUG:
-        void Debug_Log(std::string message);
+        static void Debug_Log(std::string message);
 
-    private:
+        //
+        static std::map<std::string, sf::Texture> load_textures();
+
         // Map containing texture pointers:
-        std::map<std::string, sf::Texture*> textures;
+        static std::map<std::string, sf::Texture> textures;
+    private:
 };

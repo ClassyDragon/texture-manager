@@ -1,22 +1,9 @@
-
 #include "TextureManager.h"
-
-TextureManager::TextureManager() {
-}
-
-TextureManager::~TextureManager() {
-    for (auto i = textures.begin(); i != textures.end(); i++) {
-        Debug_Log("Deleting " + i->first);
-        delete i->second;
-        textures.erase(i->first);
-    }
-    Debug_Log("Deconstructor called.");
-}
 
 void TextureManager::load(std::string filepath) {
     if (textures.find(filepath) == textures.end()) {
-        this->textures.insert(std::pair<std::string, sf::Texture*>(filepath, new sf::Texture));
-        if (!this->textures[filepath]->loadFromFile(filepath)) {
+        textures.insert(std::pair<std::string, sf::Texture>(filepath, sf::Texture()));
+        if (!textures[filepath].loadFromFile(filepath)) {
             std::cout << "\nWarning:\n\t"
                 "File     - TextureManager.cpp\n\t"
                 "Location - void TextureManager::load(std::string filepath)\n\t"
@@ -43,33 +30,29 @@ sf::Texture* TextureManager::get_texture(std::string key) {
         return nullptr;
     }
     else {
-        return textures[key];
+        return &textures[key];
     }
 }
 
-sf::Texture* TextureManager::operator [] (std::string key) {
+sf::Texture& TextureManager::get_texture_ref(std::string key) {
     if (textures.find(key) == textures.end()) {
         std::cout << "\nWarning\n\t"
             "File     - TextureManager.cpp\n\t"
-            "Location - sf::Texture* TextureManager::operator [] (std::string key)\n\t"
+            "Location - sf::Texture* TextureManager::get_texture(std::string key)\n\t"
             "Issue    - " << key << " was not found in the map.\n\t"
             "           Please load the texture using texture_manager.load(filepath).\n\n";
-        return nullptr;
+        exit(1);
     }
     else {
         return textures[key];
     }
 }
 
-void TextureManager::operator = (TextureManager& original) {
-    this->textures = original.textures;
-}
-
-std::map<std::string, sf::Texture*>::iterator TextureManager::begin() {
+std::map<std::string, sf::Texture>::iterator TextureManager::begin() {
     return textures.begin();
 }
 
-std::map<std::string, sf::Texture*>::iterator TextureManager::end() {
+std::map<std::string, sf::Texture>::iterator TextureManager::end() {
     return textures.end();
 }
 
@@ -82,3 +65,10 @@ void TextureManager::Debug_Log(std::string message) {
         std::cout << message << std::endl;
     }
 }
+
+std::map<std::string, sf::Texture> TextureManager::load_textures() {
+    std::map<std::string, sf::Texture> loaded_textures;
+    return loaded_textures;
+}
+
+std::map<std::string, sf::Texture> TextureManager::textures = TextureManager::load_textures();
